@@ -1,0 +1,56 @@
+# Environment secrets
+.env
+*.env
+.env.docker
+
+# ASP.NET
+backend/src/**/appsettings.Development.json
+backend/src/**/appsettings.Production.json
+
+# .NET build output
+**/bin/
+**/obj/
+
+# EF Core migrations (tuỳ chọn, nên giữ lại)
+# backend/src/**/Migrations/
+
+# VS Code
+.vscode/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (cho Frontend sau này)
+node_modules/
+frontend/**/dist/
+frontend/**/.env
+```
+
+---
+
+Lưu ý quan trọng:
+```
+Migrations/ → NÊN commit lên git
+  → Team khác pull về chạy dotnet ef database update là có DB ngay
+  → Không commit thì mỗi người phải tạo lại migration
+
+bin/ obj/ → KHÔNG commit
+  → File build tự sinh, nặng, không cần thiết
+# pgAdmin
+backend/src/**/pgadmin_data/
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
