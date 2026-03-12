@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VocabToeic.Application.Common.Interfaces;
 using VocabToeic.Infrastructure.Persistence;
 using VocabToeic.Infrastructure.Services;
-using VocabToeic.Application.Common.Interfaces;
+
 namespace VocabToeic.Infrastructure
 {
   public static class DependencyInjection
@@ -18,6 +19,9 @@ namespace VocabToeic.Infrastructure
                       typeof(AppDbContext).Assembly.FullName)
         )
       );
+      // UnitOfWork — Scoped to match DbContext lifetime
+      services.AddScoped<IUnitOfWork, UnitOfWork>();
+
       // Scoped — depends on IConfiguration, new instance per request
       services.AddScoped<IJwtService, JwtService>();
 
