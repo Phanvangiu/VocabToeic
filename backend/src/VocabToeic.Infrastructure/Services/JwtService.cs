@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using VocabToeic.Application.Common.Interfaces;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;

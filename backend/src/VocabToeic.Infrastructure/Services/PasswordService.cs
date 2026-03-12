@@ -1,6 +1,8 @@
 
 namespace VocabToeic.Infrastructure.Services;
 
+using VocabToeic.Application.Common.Interfaces;
+
 /// <summary>
 /// Implements password hashing and verification using BCrypt algorithm.
 /// Salt rounds = 12 — balances security and performance.

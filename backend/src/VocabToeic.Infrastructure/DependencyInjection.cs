@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VocabToeic.Infrastructure.Persistence;
 using VocabToeic.Infrastructure.Services;
+using VocabToeic.Application.Common.Interfaces;
 namespace VocabToeic.Infrastructure
 {
   public static class DependencyInjection
