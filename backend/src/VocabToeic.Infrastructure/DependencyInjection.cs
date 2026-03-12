@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using VocabToeic.Application.Common.Interfaces;
 using VocabToeic.Infrastructure.Persistence;
 using VocabToeic.Infrastructure.Services;
@@ -27,6 +28,14 @@ namespace VocabToeic.Infrastructure
 
       // Singleton — stateless, one instance for app lifetime
       services.AddSingleton<IPasswordService, PasswordService>();
+
+
+      // Redis
+      var redisConnection = configuration.GetConnectionString("Redis")
+          ?? throw new InvalidOperationException("Redis connection string is not configured.");
+      services.AddSingleton<IConnectionMultiplexer>(
+          ConnectionMultiplexer.Connect(redisConnection));
+      services.AddScoped<IRedisService, RedisService>();
       return services;
     }
   }

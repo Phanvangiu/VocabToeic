@@ -2,12 +2,13 @@ namespace VocabToeic.Application.Features.Auth.DTOs;
 
 /// <summary>
 /// Response payload returned after successful login or token refresh.
-/// Refresh token is NOT included here — it is sent via HttpOnly Cookie.
+/// RawRefreshToken is used internally by the controller to set HttpOnly Cookie — NOT returned to client directly.
 /// </summary>
 public class TokenResponse
 {
   public string AccessToken { get; set; } = string.Empty;
-  public int ExpiresIn { get; set; } // Access token lifetime in seconds
+  public int ExpiresIn { get; set; }
+  public string? RawRefreshToken { get; set; } // Internal use only — set in HttpOnly Cookie
   public UserInfo User { get; set; } = null!;
 }
 
