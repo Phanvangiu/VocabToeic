@@ -7,6 +7,7 @@ public class User : BaseEntity
   public string DisplayName { get; set; } = string.Empty;
   public int? TargetScore { get; set; }
   public int Streak { get; set; } = 0;
+  public bool IsActive { get; set; } = true;
   public DateTime? LastStudyDate { get; set; }
 
   public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
