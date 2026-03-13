@@ -1,12 +1,11 @@
 using System.Text;
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VocabToeic.API.Middlewares;
 using VocabToeic.Application;
 using VocabToeic.Infrastructure;
 
-DotNetEnv.Env.Load();
+DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,7 +56,32 @@ builder.Services.AddAuthentication(options =>
         // Token is blacklisted — reject
         context.Fail("Token has been revoked.");
       }
+    },
+    OnChallenge = async context =>
+    {
+      context.HandleResponse();
+
+      var message = "Unauthorized.";
+
+      if (context.AuthenticateFailure != null)
+      {
+        if (context.AuthenticateFailure.Message.Contains("Lifetime"))
+          message = "Token has expired.";
+        else if (context.AuthenticateFailure.Message.Contains("revoked"))
+          message = "Token has been revoked.";
+      }
+
+      context.Response.StatusCode = 401;
+      context.Response.ContentType = "application/json";
+
+      await context.Response.WriteAsync(
+          System.Text.Json.JsonSerializer.Serialize(new
+          {
+            errors = new { message = new[] { message } }
+          })
+      );
     }
+
   };
 });
 
