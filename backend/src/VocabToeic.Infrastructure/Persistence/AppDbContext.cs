@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
   public DbSet<StudySession> StudySessions => Set<StudySession>();
   public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
   public DbSet<ListeningProgress> ListeningProgresses => Set<ListeningProgress>();
+  public DbSet<ExternalLogin> ExternalLogins => Set<ExternalLogin>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {

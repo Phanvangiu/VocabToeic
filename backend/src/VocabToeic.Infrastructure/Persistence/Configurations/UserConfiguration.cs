@@ -10,7 +10,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
   public void Configure(EntityTypeBuilder<User> builder)
   {
     builder.ToTable("users");
-
     builder.HasKey(x => x.Id);
 
     builder.Property(x => x.Email)
@@ -19,14 +18,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
     builder.HasIndex(x => x.Email).IsUnique();
 
+    // Nullable — user đăng nhập Google không có password
     builder.Property(x => x.PasswordHash)
-        .IsRequired()
-        .HasMaxLength(60);
+        .HasMaxLength(60)
+        .IsRequired(false);
 
     builder.Property(x => x.DisplayName)
         .IsRequired()
         .HasMaxLength(100);
 
+    builder.Property(x => x.AvatarUrl)
+        .HasMaxLength(500)
+        .IsRequired(false);
+
+    // Lưu enum dạng string ("User" / "Admin")
     builder.Property(x => x.Role)
         .HasConversion<string>()
         .HasMaxLength(20)
@@ -58,6 +63,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     builder.HasMany(x => x.ListeningProgresses)
         .WithOne(l => l.User)
         .HasForeignKey(l => l.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+    builder.HasMany(x => x.ExternalLogins)
+        .WithOne(e => e.User)
+        .HasForeignKey(e => e.UserId)
         .OnDelete(DeleteBehavior.Cascade);
   }
 }
