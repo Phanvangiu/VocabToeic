@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
   public DbSet<ExerciseResult> ExerciseResults => Set<ExerciseResult>();
   public DbSet<StudySession> StudySessions => Set<StudySession>();
   public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+  public DbSet<ListeningProgress> ListeningProgresses => Set<ListeningProgress>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
