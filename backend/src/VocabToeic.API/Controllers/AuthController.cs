@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VocabToeic.Application.Common.Exceptions;
 using VocabToeic.Application.Features.Auth.Commands.Login;
 using VocabToeic.Application.Features.Auth.Commands.Logout;
 using VocabToeic.Application.Features.Auth.Commands.Refresh;
@@ -74,7 +75,7 @@ public class AuthController : BaseApiController
     var rawRefreshToken = Request.Cookies[RefreshTokenCookieName];
 
     if (string.IsNullOrEmpty(rawRefreshToken))
-      return Unauthorized(new { errors = new { message = new[] { "Refresh token not found." } } });
+      throw new UnauthorizedException("Refresh token not found.");
 
     var command = new RefreshTokenCommand { RawRefreshToken = rawRefreshToken };
     var result = await Mediator.Send(command, cancellationToken);
