@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
-using VocabToeic.Domain.Entities;
 
 #nullable disable
 
@@ -22,7 +21,7 @@ namespace VocabToeic.Infrastructure.Migrations
                     Topic = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Difficulty = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     IsAiGenerated = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    Content = table.Column<ExerciseContent>(type: "jsonb", nullable: false),
+                    Content = table.Column<string>(type: "jsonb", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -37,10 +36,12 @@ namespace VocabToeic.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    PasswordHash = table.Column<string>(type: "character varying(60)", maxLength: 60, nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Role = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false, defaultValue: "User"),
                     TargetScore = table.Column<int>(type: "integer", nullable: true),
                     Streak = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     LastStudyDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -51,7 +52,7 @@ namespace VocabToeic.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "wordConfigurations",
+                name: "words",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -66,7 +67,7 @@ namespace VocabToeic.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_wordConfigurations", x => x.Id);
+                    table.PrimaryKey("PK_words", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,6 +96,36 @@ namespace VocabToeic.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_exercise_results_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "listening_progresses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ExerciseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ListenedCount = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    LastListenedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_listening_progresses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_listening_progresses_exercises_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "exercises",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_listening_progresses_users_UserId",
                         column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "Id",
@@ -178,9 +209,9 @@ namespace VocabToeic.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_user_word_progresses_wordConfigurations_WordId",
+                        name: "FK_user_word_progresses_words_WordId",
                         column: x => x.WordId,
-                        principalTable: "wordConfigurations",
+                        principalTable: "words",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -204,9 +235,9 @@ namespace VocabToeic.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_word_definitions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_word_definitions_wordConfigurations_WordId",
+                        name: "FK_word_definitions_words_WordId",
                         column: x => x.WordId,
-                        principalTable: "wordConfigurations",
+                        principalTable: "words",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -220,6 +251,22 @@ namespace VocabToeic.Infrastructure.Migrations
                 name: "IX_exercise_results_UserId_CompletedAt",
                 table: "exercise_results",
                 columns: new[] { "UserId", "CompletedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_listening_progresses_ExerciseId",
+                table: "listening_progresses",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_listening_progresses_UserId",
+                table: "listening_progresses",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_listening_progresses_UserId_ExerciseId",
+                table: "listening_progresses",
+                columns: new[] { "UserId", "ExerciseId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_refresh_tokens_Token",
@@ -265,8 +312,8 @@ namespace VocabToeic.Infrastructure.Migrations
                 column: "WordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_wordConfigurations_Term",
-                table: "wordConfigurations",
+                name: "IX_words_Term",
+                table: "words",
                 column: "Term",
                 unique: true);
         }
@@ -276,6 +323,9 @@ namespace VocabToeic.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "exercise_results");
+
+            migrationBuilder.DropTable(
+                name: "listening_progresses");
 
             migrationBuilder.DropTable(
                 name: "refresh_tokens");
@@ -296,7 +346,7 @@ namespace VocabToeic.Infrastructure.Migrations
                 name: "users");
 
             migrationBuilder.DropTable(
-                name: "wordConfigurations");
+                name: "words");
         }
     }
 }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VocabToeic.Domain.Entities;
 using VocabToeic.Infrastructure.Persistence;
 
 #nullable disable
@@ -14,7 +13,7 @@ using VocabToeic.Infrastructure.Persistence;
 namespace VocabToeic.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260311131007_InitialCreate")]
+    [Migration("20260314035229_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,7 +32,7 @@ namespace VocabToeic.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<ExerciseContent>("Content")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
@@ -107,6 +106,49 @@ namespace VocabToeic.Infrastructure.Migrations
                     b.HasIndex("UserId", "CompletedAt");
 
                     b.ToTable("exercise_results", (string)null);
+                });
+
+            modelBuilder.Entity("VocabToeic.Domain.Entities.ListeningProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastListenedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("ListenedCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "ExerciseId")
+                        .IsUnique();
+
+                    b.ToTable("listening_progresses", (string)null);
                 });
 
             modelBuilder.Entity("VocabToeic.Domain.Entities.RefreshToken", b =>
@@ -213,12 +255,25 @@ namespace VocabToeic.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<DateTime?>("LastStudyDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("User");
 
                     b.Property<int>("Streak")
                         .ValueGeneratedOnAdd()
@@ -343,7 +398,7 @@ namespace VocabToeic.Infrastructure.Migrations
                     b.HasIndex("Term")
                         .IsUnique();
 
-                    b.ToTable("wordConfigurations", (string)null);
+                    b.ToTable("words", (string)null);
                 });
 
             modelBuilder.Entity("VocabToeic.Domain.Entities.WordDefinition", b =>
@@ -409,6 +464,25 @@ namespace VocabToeic.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VocabToeic.Domain.Entities.ListeningProgress", b =>
+                {
+                    b.HasOne("VocabToeic.Domain.Entities.Exercise", "Exercise")
+                        .WithMany("ListeningProgresses")
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocabToeic.Domain.Entities.User", "User")
+                        .WithMany("ListeningProgresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VocabToeic.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("VocabToeic.Domain.Entities.User", "User")
@@ -463,12 +537,16 @@ namespace VocabToeic.Infrastructure.Migrations
 
             modelBuilder.Entity("VocabToeic.Domain.Entities.Exercise", b =>
                 {
+                    b.Navigation("ListeningProgresses");
+
                     b.Navigation("Results");
                 });
 
             modelBuilder.Entity("VocabToeic.Domain.Entities.User", b =>
                 {
                     b.Navigation("ExerciseResults");
+
+                    b.Navigation("ListeningProgresses");
 
                     b.Navigation("RefreshTokens");
 

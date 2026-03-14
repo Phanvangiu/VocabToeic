@@ -1,15 +1,32 @@
 using System.Text;
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VocabToeic.API.Middlewares;
 using VocabToeic.Application;
 using VocabToeic.Infrastructure;
 
-DotNetEnv.Env.Load();
+// DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", ".env"));
+
+// Load .env nếu tìm thấy, không thì dùng environment variables có sẵn
+var root = Directory.GetCurrentDirectory();
+var envFile = Path.Combine(root, ".env");
+
+// Thử tìm lên tối đa 5 cấp
+for (int i = 0; i < 5; i++)
+{
+  if (File.Exists(envFile))
+  {
+    DotNetEnv.Env.Load(envFile);
+    break;
+  }
+  var parent = Directory.GetParent(root);
+  if (parent is null) break;
+  root = parent.FullName;
+  envFile = Path.Combine(root, ".env");
+}
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddEnvironmentVariables();
 // ── Services ──────────────────────────────────────
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -57,7 +74,32 @@ builder.Services.AddAuthentication(options =>
         // Token is blacklisted — reject
         context.Fail("Token has been revoked.");
       }
+    },
+    OnChallenge = async context =>
+    {
+      context.HandleResponse();
+
+      var message = "Unauthorized.";
+
+      if (context.AuthenticateFailure != null)
+      {
+        if (context.AuthenticateFailure.Message.Contains("Lifetime"))
+          message = "Token has expired.";
+        else if (context.AuthenticateFailure.Message.Contains("revoked"))
+          message = "Token has been revoked.";
+      }
+
+      context.Response.StatusCode = 401;
+      context.Response.ContentType = "application/json";
+
+      await context.Response.WriteAsync(
+          System.Text.Json.JsonSerializer.Serialize(new
+          {
+            errors = new { message = new[] { message } }
+          })
+      );
     }
+
   };
 });
 
