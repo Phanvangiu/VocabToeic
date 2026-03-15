@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VocabToeic.Application.Common.Exceptions;
+using VocabToeic.Application.Features.Auth.Commands.GoogleLogin;
 using VocabToeic.Application.Features.Auth.Commands.Login;
 using VocabToeic.Application.Features.Auth.Commands.Logout;
 using VocabToeic.Application.Features.Auth.Commands.Refresh;
@@ -110,6 +112,21 @@ public class AuthController : BaseApiController
     return Ok(new { message = "Logged out successfully." });
   }
 
+  [HttpPost("google")]
+  [AllowAnonymous]
+  [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
+  public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)
+  {
+    var command = new GoogleLoginCommand(request.IdToken);
+    var result = await Mediator.Send(command, cancellationToken);
+
+    SetRefreshTokenCookie(result.RawRefreshToken!);
+    result.RawRefreshToken = null;
+
+    return Ok(result);
+  }
   // ── Private helpers ────────────────────────────────────
 
   private void SetRefreshTokenCookie(string rawToken)

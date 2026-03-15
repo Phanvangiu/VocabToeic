@@ -14,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
 
   private IUserRepository? _users;
   private IRefreshTokenRepository? _refreshTokens;
+  private IExternalLoginRepository? _externalLogins;
 
   public UnitOfWork(AppDbContext context)
   {
@@ -25,6 +26,9 @@ public class UnitOfWork : IUnitOfWork
 
   public IRefreshTokenRepository RefreshTokens
       => _refreshTokens ??= new RefreshTokenRepository(_context);
+
+  public IExternalLoginRepository ExternalLogins
+      => _externalLogins ??= new ExternalLoginRepository(_context);
 
   public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
       => await _context.SaveChangesAsync(cancellationToken);
