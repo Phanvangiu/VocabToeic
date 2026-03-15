@@ -35,7 +35,11 @@ namespace VocabToeic.Infrastructure
           ?? throw new InvalidOperationException("Redis connection string is not configured.");
       services.AddSingleton<IConnectionMultiplexer>(
           ConnectionMultiplexer.Connect(redisConnection));
+
       services.AddScoped<IRedisService, RedisService>();
+
+      services.AddScoped<IGoogleAuthService, GoogleAuthService>();
+
       return services;
     }
   }

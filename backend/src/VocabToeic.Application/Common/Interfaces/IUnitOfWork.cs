@@ -11,6 +11,7 @@ public interface IUnitOfWork : IDisposable
 {
   IUserRepository Users { get; }
   IRefreshTokenRepository RefreshTokens { get; }
+  IExternalLoginRepository ExternalLogins { get; }
 
   /// <summary>Commits all pending changes to the database.</summary>
   Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

@@ -37,7 +37,12 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
     // Use generic error message to prevent user enumeration attack
     if (user is null || !user.IsActive)
       throw new UnauthorizedException("Invalid email or password.");
-
+    if (user.PasswordHash is null)
+    {
+      // Todo: Gửi email "Set Password" để user có thể đăng nhập bằng cả 2 cách
+      // Cần implement: SetPasswordCommand + MailKit email service
+      throw new UnauthorizedException("This account uses Google login. Please sign in with Google.");
+    }
     // Verify password
     var isPasswordValid = _passwordService.VerifyPassword(
         request.Password, user.PasswordHash);
