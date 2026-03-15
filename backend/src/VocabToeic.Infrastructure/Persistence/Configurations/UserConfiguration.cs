@@ -18,7 +18,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
     builder.HasIndex(x => x.Email).IsUnique();
 
-    // Nullable — user đăng nhập Google không có password
     builder.Property(x => x.PasswordHash)
         .HasMaxLength(60)
         .IsRequired(false);

@@ -2,10 +2,6 @@ using FluentValidation;
 
 namespace VocabToeic.Application.Features.Auth.Commands.Register;
 
-/// <summary>
-/// Validates RegisterCommand input before reaching the handler.
-/// Automatically executed by ValidationBehavior in MediatR pipeline.
-/// </summary>
 public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
   public RegisterCommandValidator()
@@ -26,14 +22,5 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     RuleFor(x => x.ConfirmPassword)
         .NotEmpty().WithMessage("Confirm password is required.")
         .Equal(x => x.Password).WithMessage("Passwords do not match.");
-
-    RuleFor(x => x.DisplayName)
-        .NotEmpty().WithMessage("Display name is required.")
-        .MinimumLength(2).WithMessage("Display name must be at least 2 characters.")
-        .MaximumLength(100).WithMessage("Display name must not exceed 100 characters.");
-
-    RuleFor(x => x.TargetScore)
-        .InclusiveBetween(10, 990).WithMessage("Target score must be between 10 and 990.")
-        .When(x => x.TargetScore.HasValue);
   }
 }

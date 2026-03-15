@@ -6,6 +6,7 @@ public class User : BaseEntity
 {
   public string Email { get; set; } = string.Empty;
 
+  /// <summary>Null nếu user đăng ký qua OAuth.</summary>
   public string? PasswordHash { get; set; }
 
   public string DisplayName { get; set; } = string.Empty;
@@ -15,6 +16,15 @@ public class User : BaseEntity
   public int Streak { get; set; } = 0;
   public DateTime? LastStudyDate { get; set; }
   public bool IsActive { get; set; } = true;
+
+  // Email Verification  
+  public bool EmailVerified { get; set; } = false;
+  public string? EmailVerificationToken { get; set; }
+  public DateTime? EmailVerificationExpiresAt { get; set; }
+
+  // Password Reset
+  public string? PasswordResetToken { get; set; }
+  public DateTime? PasswordResetExpiresAt { get; set; }
 
   public ICollection<UserWordProgress> WordProgresses { get; set; } = [];
   public ICollection<ExerciseResult> ExerciseResults { get; set; } = [];

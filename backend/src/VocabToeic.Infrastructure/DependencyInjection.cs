@@ -40,6 +40,8 @@ namespace VocabToeic.Infrastructure
 
       services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
+      services.AddScoped<IEmailService, EmailService>();
+
       return services;
     }
   }
