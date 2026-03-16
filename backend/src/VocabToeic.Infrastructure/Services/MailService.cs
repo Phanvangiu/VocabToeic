@@ -18,7 +18,7 @@ public class EmailService : IEmailService
   public EmailService(IConfiguration configuration)
   {
     _host = configuration["Email:Host"] ?? "smtp.gmail.com";
-    _port = int.Parse(configuration["Email:Port"] ?? "587");
+    _port = int.Parse(configuration["Email:Port"] ?? "465");
     _from = configuration["Email:From"]
         ?? throw new InvalidOperationException("Email:From is not configured.");
     _password = configuration["Email:Password"]
@@ -114,7 +114,7 @@ public class EmailService : IEmailService
     using var client = new SmtpClient();
 
     // Gmail SMTP: port 587 dùng STARTTLS
-    await client.ConnectAsync(_host, _port, SecureSocketOptions.StartTls, cancellationToken);
+    await client.ConnectAsync(_host, _port, SecureSocketOptions.SslOnConnect, cancellationToken);
     await client.AuthenticateAsync(_from, _password, cancellationToken);
     await client.SendAsync(message, cancellationToken);
     await client.DisconnectAsync(true, cancellationToken);
