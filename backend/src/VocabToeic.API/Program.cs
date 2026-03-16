@@ -170,5 +170,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); // ← Phải trước UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/", () => "VocabToeic API is running");
 
 app.Run();
