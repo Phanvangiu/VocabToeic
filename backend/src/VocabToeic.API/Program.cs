@@ -154,8 +154,7 @@ var app = builder.Build();
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
-{
+
   app.UseSwagger();
   app.UseSwaggerUI(options =>
   {
@@ -163,7 +162,7 @@ if (app.Environment.IsDevelopment())
     options.RoutePrefix = "swagger";
     options.DisplayRequestDuration();
   });
-}
+
 
 app.UseCors("Frontend");
 app.UseHttpsRedirection();
