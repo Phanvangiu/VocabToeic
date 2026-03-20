@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using VocabToeic.Application.Common.Interfaces;
 
 namespace VocabToeic.Infrastructure.Services;
@@ -15,13 +15,13 @@ public class EmailService : IEmailService
 
   public EmailService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
   {
-    _apiKey = configuration["Email:ResendApiKey"]
-        ?? throw new InvalidOperationException("Email:ResendApiKey is not configured.");
+    _apiKey = configuration["Email:ApiKey"]
+        ?? throw new InvalidOperationException("Email:ApiKey is not configured.");
     _from = configuration["Email:From"]
         ?? throw new InvalidOperationException("Email:From is not configured.");
     _displayName = configuration["Email:DisplayName"] ?? "VocabToeic";
     _frontendUrl = configuration["Email:FrontendUrl"] ?? "http://localhost:5173";
-    _httpClient = httpClientFactory.CreateClient("Resend");
+    _httpClient = httpClientFactory.CreateClient();
   }
 
   public async Task SendVerificationEmailAsync(
@@ -37,7 +37,7 @@ public class EmailService : IEmailService
       </a>
       <p>Link có hiệu lực trong <strong>24 giờ</strong>.</p>
     """;
-    await SendAsync(toEmail, "Xác thực email — VocabToeic", body, cancellationToken);
+    await SendAsync(toEmail, displayName, "Xác thực email — VocabToeic", body, cancellationToken);
   }
 
   public async Task SendPasswordResetEmailAsync(
@@ -53,7 +53,7 @@ public class EmailService : IEmailService
       </a>
       <p>Link có hiệu lực trong <strong>1 giờ</strong>.</p>
     """;
-    await SendAsync(toEmail, "Đặt lại mật khẩu — VocabToeic", body, cancellationToken);
+    await SendAsync(toEmail, displayName, "Đặt lại mật khẩu — VocabToeic", body, cancellationToken);
   }
 
   public async Task SendSetPasswordEmailAsync(
@@ -69,19 +69,19 @@ public class EmailService : IEmailService
       </a>
       <p>Link có hiệu lực trong <strong>1 giờ</strong>.</p>
     """;
-    await SendAsync(toEmail, "Đặt mật khẩu — VocabToeic", body, cancellationToken);
+    await SendAsync(toEmail, displayName, "Đặt mật khẩu — VocabToeic", body, cancellationToken);
   }
 
   private async Task SendAsync(
-      string toEmail, string subject, string htmlBody,
+      string toEmail, string toName, string subject, string htmlBody,
       CancellationToken cancellationToken)
   {
-    var request = new HttpRequestMessage(HttpMethod.Post, "https://api.resend.com/emails");
+    var request = new HttpRequestMessage(HttpMethod.Post, "https://api.mailersend.com/v1/email");
     request.Headers.Add("Authorization", $"Bearer {_apiKey}");
     request.Content = JsonContent.Create(new
     {
-      from = $"{_displayName} <{_from}>",
-      to = new[] { toEmail },
+      from = new { email = _from, name = _displayName },
+      to = new[] { new { email = toEmail, name = toName } },
       subject,
       html = htmlBody
     });
