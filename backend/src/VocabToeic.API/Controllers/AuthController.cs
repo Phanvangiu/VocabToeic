@@ -9,6 +9,7 @@ using VocabToeic.Application.Features.Auth.Commands.Logout;
 using VocabToeic.Application.Features.Auth.Commands.Refresh;
 using VocabToeic.Application.Features.Auth.Commands.Register;
 using VocabToeic.Application.Features.Auth.Commands.ResetPassword;
+using VocabToeic.Application.Features.Auth.Commands.SetPassword;
 using VocabToeic.Application.Features.Auth.Commands.SetPasswordFromToken;
 using VocabToeic.Application.Features.Auth.Commands.VerifyEmail;
 using VocabToeic.Application.Features.Auth.DTOs;
@@ -168,7 +169,21 @@ public class AuthController : BaseApiController
     return Ok(new { message = "Password has been reset successfully." });
   }
 
+  /// <summary>Set password for the first time — for Google OAuth users.</summary>
+  [HttpPost("set-password")]
+  [AllowAnonymous]
+  [ProducesResponseType(StatusCodes.Status200OK)]
+  [ProducesResponseType(StatusCodes.Status400BadRequest)]
+  public async Task<IActionResult> SetPassword(
+      [FromBody] SetPasswordRequest request,
+      CancellationToken cancellationToken)
+  {
+    await Mediator.Send(
+        new SetPasswordCommand(request.Token, request.NewPassword, request.ConfirmPassword),
+        cancellationToken);
 
+    return Ok(new { message = "Password set successfully. You can now log in with your email." });
+  }
   /// <summary>
   /// Set password for authenticated Google users who don't have a password yet.
   /// Requires Bearer token — no email token needed.
