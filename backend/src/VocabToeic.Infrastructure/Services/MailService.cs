@@ -87,6 +87,8 @@ public class EmailService : IEmailService
     });
 
     var response = await _httpClient.SendAsync(request, cancellationToken);
-    response.EnsureSuccessStatusCode();
+    var body = await response.Content.ReadAsStringAsync(cancellationToken);
+    if (!response.IsSuccessStatusCode)
+      throw new HttpRequestException($"Mailersend {response.StatusCode}: {body}");
   }
 }
