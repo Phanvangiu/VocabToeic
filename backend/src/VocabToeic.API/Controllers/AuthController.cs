@@ -208,22 +208,26 @@ public class AuthController : BaseApiController
 
   private void SetRefreshTokenCookie(string rawToken)
   {
+    var isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+
     Response.Cookies.Append(RefreshTokenCookieName, rawToken, new CookieOptions
     {
       HttpOnly = true,
-      Secure = true,
-      SameSite = SameSiteMode.Strict,
+      Secure = isProduction,
+      SameSite = isProduction ? SameSiteMode.Strict : SameSiteMode.Lax,
       Expires = DateTimeOffset.UtcNow.AddDays(7)
     });
   }
 
   private void ClearRefreshTokenCookie()
   {
+    var isProduction = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production";
+
     Response.Cookies.Delete(RefreshTokenCookieName, new CookieOptions
     {
       HttpOnly = true,
-      Secure = true,
-      SameSite = SameSiteMode.Strict
+      Secure = isProduction,
+      SameSite = isProduction ? SameSiteMode.Strict : SameSiteMode.Lax
     });
   }
 }
