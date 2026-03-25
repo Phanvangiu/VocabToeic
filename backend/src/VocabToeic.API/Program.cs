@@ -155,13 +155,13 @@ var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 
-  app.UseSwagger();
-  app.UseSwaggerUI(options =>
-  {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "VocabToeic API v1");
-    options.RoutePrefix = "swagger";
-    options.DisplayRequestDuration();
-  });
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+  options.SwaggerEndpoint("/swagger/v1/swagger.json", "VocabToeic API v1");
+  options.RoutePrefix = "swagger";
+  options.DisplayRequestDuration();
+});
 
 
 app.UseCors("Frontend");
@@ -169,6 +169,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); // ← Phải trước UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
 app.MapGet("/", () => "VocabToeic API is running");
 
 app.Run();
