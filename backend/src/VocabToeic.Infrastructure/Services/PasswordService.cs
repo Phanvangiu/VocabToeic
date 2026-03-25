@@ -10,7 +10,7 @@ using VocabToeic.Application.Common.Interfaces;
 /// </summary>
 public class PasswordService : IPasswordService
 {
-  private const int SaltRounds = 12;
+  private const int SaltRounds = 10;
   public string HashPassword(string password)
   {
     return BCrypt.Net.BCrypt.HashPassword(password, SaltRounds);
