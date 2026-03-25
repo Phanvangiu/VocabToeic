@@ -40,11 +40,13 @@ namespace VocabToeic.Infrastructure
       services.AddSingleton<IConnectionMultiplexer>(
           ConnectionMultiplexer.Connect(redisConfig));
       services.AddScoped<IRedisService, RedisService>();
+      services.AddScoped<IHealthService, HealthService>();
 
       services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
       services.AddHttpClient();
       services.AddScoped<IEmailService, EmailService>();
+
 
       return services;
     }

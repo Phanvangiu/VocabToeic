@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VocabToeic.API.Middlewares;
 using VocabToeic.Application;
+using VocabToeic.Application.Common.Interfaces;
 using VocabToeic.Infrastructure;
 
 // DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", ".env"));
@@ -186,7 +187,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication(); // ← Phải trước UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+// Program.cs
+app.MapGet("/health", async (IHealthService healthService) =>
+{
+  await healthService.PingDatabaseAsync();
+  return Results.Ok(new { status = "healthy" });
+});
 app.MapGet("/", () => "VocabToeic API is running");
 
 app.Run();
