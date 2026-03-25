@@ -153,7 +153,24 @@ var app = builder.Build();
 
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();
+// Performance logging
+app.Use(async (context, next) =>
+{
+  var sw = System.Diagnostics.Stopwatch.StartNew();
+  await next();
+  sw.Stop();
 
+  var logger = context.RequestServices
+      .GetRequiredService<ILogger<Program>>();
+
+  logger.LogInformation(
+      "[PERF] {Method} {Path} → {Status} | {Ms}ms",
+      context.Request.Method,
+      context.Request.Path,
+      context.Response.StatusCode,
+      sw.ElapsedMilliseconds
+  );
+});
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>
