@@ -23,4 +23,10 @@ public class UserRepository : GenericRepository<User>, IUserRepository
       CancellationToken cancellationToken = default)
       => await _dbSet
           .AnyAsync(u => u.Email == email.ToLower(), cancellationToken);
+
+  public Task DeleteAsync(User user, CancellationToken cancellationToken = default)
+  {
+    _context.Users.Remove(user);
+    return Task.CompletedTask;
+  }
 }

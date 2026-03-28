@@ -14,6 +14,7 @@ public class User : BaseEntity
   public UserRole Role { get; set; } = UserRole.User;
   public int? TargetScore { get; set; }
   public int Streak { get; set; } = 0;
+  public int? WordsPerDay { get; set; }
   public DateTime? LastStudyDate { get; set; }
   public bool IsActive { get; set; } = true;
 

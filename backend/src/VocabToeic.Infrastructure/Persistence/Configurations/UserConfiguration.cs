@@ -11,7 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
   {
     builder.ToTable("users");
     builder.HasKey(x => x.Id);
-
+    builder.Property(x => x.WordsPerDay);
     builder.Property(x => x.Email)
         .IsRequired()
         .HasMaxLength(256);
