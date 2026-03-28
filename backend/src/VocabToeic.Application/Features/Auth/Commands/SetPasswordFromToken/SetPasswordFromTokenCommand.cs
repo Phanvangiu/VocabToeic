@@ -50,6 +50,7 @@ public class SetPasswordFromTokenCommandHandler : IRequestHandler<SetPasswordFro
             });
 
     user.PasswordHash = _passwordService.HashPassword(request.NewPassword);
+    user.EmailVerified = true;
     _uow.Users.Update(user);
     await _uow.SaveChangesAsync(cancellationToken);
   }

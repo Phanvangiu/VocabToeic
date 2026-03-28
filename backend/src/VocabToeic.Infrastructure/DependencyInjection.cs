@@ -33,14 +33,20 @@ namespace VocabToeic.Infrastructure
       // Redis
       var redisConnection = configuration.GetConnectionString("Redis")
           ?? throw new InvalidOperationException("Redis connection string is not configured.");
+      var redisConfig = ConfigurationOptions.Parse(redisConnection);
+      redisConfig.AbortOnConnectFail = false;
+      redisConfig.Ssl = true;
+      redisConfig.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
       services.AddSingleton<IConnectionMultiplexer>(
-          ConnectionMultiplexer.Connect(redisConnection));
-
+          ConnectionMultiplexer.Connect(redisConfig));
       services.AddScoped<IRedisService, RedisService>();
+      services.AddScoped<IHealthService, HealthService>();
 
       services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
+      services.AddHttpClient();
       services.AddScoped<IEmailService, EmailService>();
+
 
       return services;
     }

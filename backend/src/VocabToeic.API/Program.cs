@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using VocabToeic.API.Middlewares;
 using VocabToeic.Application;
+using VocabToeic.Application.Common.Interfaces;
 using VocabToeic.Infrastructure;
 
 // DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", ".env"));
@@ -153,22 +154,45 @@ var app = builder.Build();
 
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
-if (app.Environment.IsDevelopment())
+// Performance logging
+app.Use(async (context, next) =>
 {
-  app.UseSwagger();
-  app.UseSwaggerUI(options =>
-  {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "VocabToeic API v1");
-    options.RoutePrefix = "swagger";
-    options.DisplayRequestDuration();
-  });
-}
+  var sw = System.Diagnostics.Stopwatch.StartNew();
+  await next();
+  sw.Stop();
+
+  var logger = context.RequestServices
+      .GetRequiredService<ILogger<Program>>();
+
+  logger.LogInformation(
+      "[PERF] {Method} {Path} → {Status} | {Ms}ms",
+      context.Request.Method,
+      context.Request.Path,
+      context.Response.StatusCode,
+      sw.ElapsedMilliseconds
+  );
+});
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+  options.SwaggerEndpoint("/swagger/v1/swagger.json", "VocabToeic API v1");
+  options.RoutePrefix = "swagger";
+  options.DisplayRequestDuration();
+});
+
 
 app.UseCors("Frontend");
 app.UseHttpsRedirection();
 app.UseAuthentication(); // ← Phải trước UseAuthorization
 app.UseAuthorization();
 app.MapControllers();
+// Program.cs
+app.MapGet("/health", async (IHealthService healthService) =>
+{
+  await healthService.PingDatabaseAsync();
+  return Results.Ok(new { status = "healthy" });
+});
+app.MapGet("/", () => "VocabToeic API is running");
 
 app.Run();

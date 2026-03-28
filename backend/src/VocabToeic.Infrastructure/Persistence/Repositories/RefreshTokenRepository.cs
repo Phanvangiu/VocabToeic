@@ -37,10 +37,8 @@ public class RefreshTokenRepository : GenericRepository<RefreshToken>, IRefreshT
 
   public async Task DeleteExpiredTokensAsync(CancellationToken cancellationToken = default)
   {
-    var expiredTokens = await _dbSet
-        .Where(rt => rt.ExpiresAt < DateTime.UtcNow)
-        .ToListAsync(cancellationToken);
-
-    _dbSet.RemoveRange(expiredTokens);
+    await _dbSet
+        .Where(rt => rt.ExpiresAt < DateTime.UtcNow || rt.RevokedAt != null)
+        .ExecuteDeleteAsync(cancellationToken);
   }
 }

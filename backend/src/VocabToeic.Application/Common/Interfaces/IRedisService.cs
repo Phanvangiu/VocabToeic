@@ -14,4 +14,6 @@ public interface IRedisService
 
   /// <summary>Deletes a key.</summary>
   Task DeleteAsync(string key);
+
+  Task PingAsync();
 }

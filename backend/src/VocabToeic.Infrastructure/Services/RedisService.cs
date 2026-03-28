@@ -24,4 +24,7 @@ public class RedisService : IRedisService
 
   public async Task DeleteAsync(string key)
       => await _db.KeyDeleteAsync(key);
+
+  public async Task PingAsync()
+=> await _db.PingAsync();
 }

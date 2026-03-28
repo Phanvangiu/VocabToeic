@@ -212,7 +212,7 @@ public class AuthController : BaseApiController
     {
       HttpOnly = true,
       Secure = true,
-      SameSite = SameSiteMode.Strict,
+      SameSite = SameSiteMode.None,  // cross-origin: FE và BE khác domain
       Expires = DateTimeOffset.UtcNow.AddDays(7)
     });
   }
@@ -223,7 +223,7 @@ public class AuthController : BaseApiController
     {
       HttpOnly = true,
       Secure = true,
-      SameSite = SameSiteMode.Strict
+      SameSite = SameSiteMode.None
     });
   }
 }
