@@ -33,9 +33,11 @@ public class AuthController : BaseApiController
     {
       Email = request.Email,
       Password = request.Password,
-      ConfirmPassword = request.ConfirmPassword
+      ConfirmPassword = request.ConfirmPassword,
+      FullName = request.FullName,
+      TargetScore = request.TargetScore,
+      WordsPerDay = request.WordsPerDay
     };
-
     var result = await Mediator.Send(command, cancellationToken);
     return StatusCode(StatusCodes.Status201Created, result);
   }

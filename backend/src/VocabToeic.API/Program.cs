@@ -12,6 +12,7 @@ using VocabToeic.Infrastructure;
 var root = Directory.GetCurrentDirectory();
 var envFile = Path.Combine(root, ".env");
 
+
 // Thử tìm lên tối đa 5 cấp
 for (int i = 0; i < 5; i++)
 {
@@ -151,6 +152,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();

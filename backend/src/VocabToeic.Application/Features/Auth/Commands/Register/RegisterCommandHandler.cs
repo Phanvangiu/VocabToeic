@@ -34,15 +34,17 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
                 { "email", ["Email is already taken."] }
             });
 
-    // Use the part before @ as default display name
-    var displayName = request.Email.Split('@')[0];
     var verificationToken = GenerateToken();
 
     var user = new User
     {
       Email = request.Email.ToLower().Trim(),
       PasswordHash = _passwordService.HashPassword(request.Password),
-      DisplayName = displayName,
+      DisplayName = string.IsNullOrWhiteSpace(request.FullName)
+      ? request.Email.Split('@')[0]
+      : request.FullName.Trim(),
+      TargetScore = request.TargetScore,
+      WordsPerDay = request.WordsPerDay,
       IsActive = true,
       EmailVerified = false,
       EmailVerificationToken = verificationToken,
@@ -52,8 +54,22 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterR
     await _uow.Users.AddAsync(user, cancellationToken);
     await _uow.SaveChangesAsync(cancellationToken);
 
-    await _emailService.SendVerificationEmailAsync(
-        user.Email, user.DisplayName, verificationToken, cancellationToken);
+    try
+    {
+      await _emailService.SendVerificationEmailAsync(
+          user.Email, user.DisplayName, verificationToken, cancellationToken);
+    }
+    catch (Exception)
+    {
+      // Rollback: xóa user vừa tạo
+      await _uow.Users.DeleteAsync(user, cancellationToken);
+      await _uow.SaveChangesAsync(cancellationToken);
+
+      throw new ValidationException(new Dictionary<string, string[]>
+    {
+        { "email", ["Email address is invalid or cannot receive emails. Please use a different email."] }
+    });
+    }
 
     return new RegisterResponse
     {
