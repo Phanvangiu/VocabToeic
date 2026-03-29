@@ -150,6 +150,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+// ── Middleware ────────────────────────────────────
 
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();
