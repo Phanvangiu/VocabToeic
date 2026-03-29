@@ -44,7 +44,7 @@ public class EmailService : IEmailService
       string toEmail, string displayName, string token,
       CancellationToken cancellationToken = default)
   {
-    var resetUrl = $"{_frontendUrl}/reset-password?token={token}";
+    var resetUrl = $"{_frontendUrl}/reset-password?token={Uri.EscapeDataString(token)}";
     var body = $"""
       <h2>Xin chào {displayName}!</h2>
       <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu.</p>
@@ -60,7 +60,7 @@ public class EmailService : IEmailService
       string toEmail, string displayName, string token,
       CancellationToken cancellationToken = default)
   {
-    var setPasswordUrl = $"{_frontendUrl}/set-password?token={token}";
+    var setPasswordUrl = $"{_frontendUrl}/set-password?token={Uri.EscapeDataString(token)}";
     var body = $"""
       <h2>Xin chào {displayName}!</h2>
       <p>Bạn có thể đặt thêm mật khẩu để đăng nhập bằng email.</p>
