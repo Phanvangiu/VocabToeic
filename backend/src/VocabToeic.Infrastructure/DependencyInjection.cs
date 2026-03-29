@@ -42,13 +42,9 @@ namespace VocabToeic.Infrastructure
       //     ConnectionMultiplexer.Connect(redisConfig));
       // Redis
       var redisConnection = configuration.GetConnectionString("Redis")
-          ?? throw new InvalidOperationException("Redis connection string is not configured.");
+    ?? throw new InvalidOperationException("Redis connection string is not configured.");
       var redisConfig = ConfigurationOptions.Parse(redisConnection);
       redisConfig.AbortOnConnectFail = false;
-      redisConfig.Ssl = configuration.GetValue<bool>("Redis__Ssl", false);
-
-      if (redisConfig.Ssl)
-        redisConfig.SslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 
       services.AddSingleton<IConnectionMultiplexer>(
           ConnectionMultiplexer.Connect(redisConfig));
