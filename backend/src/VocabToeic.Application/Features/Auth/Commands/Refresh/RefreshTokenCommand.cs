@@ -10,4 +10,5 @@ namespace VocabToeic.Application.Features.Auth.Commands.Refresh;
 public class RefreshTokenCommand : IRequest<TokenResponse>
 {
   public string RawRefreshToken { get; set; } = string.Empty;
+  public string? OldAccessToken { get; set; }
 }

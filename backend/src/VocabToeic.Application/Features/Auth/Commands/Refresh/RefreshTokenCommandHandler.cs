@@ -15,12 +15,16 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
   private readonly IUnitOfWork _uow;
   private readonly IJwtService _jwtService;
 
+  private readonly IRedisService _redisService;
+
   public RefreshTokenCommandHandler(
       IUnitOfWork uow,
-      IJwtService jwtService)
+      IJwtService jwtService,
+      IRedisService redisService)
   {
     _uow = uow;
     _jwtService = jwtService;
+    _redisService = redisService;
   }
 
   public async Task<TokenResponse> Handle(
@@ -56,6 +60,14 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
     refreshToken.RevokedAt = DateTime.UtcNow;
     refreshToken.RevokedReason = "Rotated";
     _uow.RefreshTokens.Update(refreshToken);
+
+    if (!string.IsNullOrEmpty(request.OldAccessToken))
+    {
+      var jti = _jwtService.GetJtiFromToken(request.OldAccessToken);
+      var remaining = _jwtService.GetRemainingSeconds(request.OldAccessToken);
+      if (remaining > 0)
+        await _redisService.SetAsync($"blacklist:{jti}", "revoked", remaining);
+    }
 
     // Generate new tokens
     var newAccessToken = _jwtService.GenerateAccessToken(
