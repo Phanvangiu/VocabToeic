@@ -145,6 +145,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+var app = builder.Build();
+// Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 // ── CORS ──────────────────────────────────────────
 var allowedOrigins = builder.Configuration["AllowedOrigins"]
     ?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? [];
@@ -156,11 +158,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials());
 });
-
-var app = builder.Build();
-// Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
+Console.WriteLine($"allowedOrigins :{allowedOrigins[1]}");
 
 // ── Middleware ────────────────────────────────────
+app.UseCors("Frontend");
 app.UseMiddleware<GlobalExceptionMiddleware>();
 // Performance logging
 app.Use(async (context, next) =>
@@ -189,10 +190,8 @@ app.UseSwaggerUI(options =>
   options.DisplayRequestDuration();
 });
 
-
-app.UseCors("Frontend");
 app.UseHttpsRedirection();
-app.UseAuthentication(); // ← Phải trước UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 // Program.cs
