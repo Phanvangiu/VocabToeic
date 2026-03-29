@@ -33,6 +33,10 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// ── Current User ──────────────────────────────────
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, VocabToeic.API.Services.CurrentUserService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -152,7 +156,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
+// Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 
 // ── Middleware ────────────────────────────────────
 app.UseMiddleware<GlobalExceptionMiddleware>();

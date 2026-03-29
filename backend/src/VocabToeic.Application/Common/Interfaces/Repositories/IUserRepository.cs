@@ -9,7 +9,8 @@ namespace VocabToeic.Application.Common.Interfaces.Repositories;
 public interface IUserRepository : IGenericRepository<User>
 {
   Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
-
   Task<bool> IsEmailTakenAsync(string email, CancellationToken cancellationToken = default);
   Task DeleteAsync(User user, CancellationToken cancellationToken = default);
+  Task UpdateTargetAsync(Guid userId, int targetScore, int wordsPerDay, CancellationToken cancellationToken = default);
+
 }

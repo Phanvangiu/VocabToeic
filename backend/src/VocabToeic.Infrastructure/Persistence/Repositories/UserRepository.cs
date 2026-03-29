@@ -29,4 +29,14 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     _context.Users.Remove(user);
     return Task.CompletedTask;
   }
+
+  public async Task UpdateTargetAsync(Guid userId, int targetScore, int wordsPerDay, CancellationToken cancellationToken = default)
+  {
+    await _context.Users
+        .Where(u => u.Id == userId)
+        .ExecuteUpdateAsync(setters => setters
+            .SetProperty(u => u.TargetScore, targetScore)
+            .SetProperty(u => u.WordsPerDay, wordsPerDay),
+        cancellationToken);
+  }
 }

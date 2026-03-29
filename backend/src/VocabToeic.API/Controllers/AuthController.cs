@@ -76,7 +76,15 @@ public class AuthController : BaseApiController
     if (string.IsNullOrEmpty(rawRefreshToken))
       throw new UnauthorizedException("Refresh token not found.");
 
-    var command = new RefreshTokenCommand { RawRefreshToken = rawRefreshToken };
+    var oldAccessToken = Request.Headers.Authorization
+       .ToString().Replace("Bearer ", "");
+
+    var command = new RefreshTokenCommand
+    {
+      RawRefreshToken = rawRefreshToken,
+      OldAccessToken = string.IsNullOrEmpty(oldAccessToken) ? null : oldAccessToken
+    };
+
     var result = await Mediator.Send(command, cancellationToken);
 
     SetRefreshTokenCookie(result.RawRefreshToken!);
