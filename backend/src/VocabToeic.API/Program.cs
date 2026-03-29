@@ -156,7 +156,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials());
 });
-Console.WriteLine($"allowedOrigins :{allowedOrigins[1]}");
+Console.WriteLine($"allowedOrigins: {string.Join(" | ", allowedOrigins)}");
 var app = builder.Build();
 // Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 
