@@ -144,10 +144,8 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
-
-var app = builder.Build();
-// Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 // ── CORS ──────────────────────────────────────────
+
 var allowedOrigins = builder.Configuration["AllowedOrigins"]
     ?.Split(",", StringSplitOptions.RemoveEmptyEntries) ?? [];
 builder.Services.AddCors(options =>
@@ -159,6 +157,8 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 Console.WriteLine($"allowedOrigins :{allowedOrigins[1]}");
+var app = builder.Build();
+// Console.WriteLine($"Email:ApiKey: {builder.Configuration["Email:ApiKey"]}");
 
 // ── Middleware ────────────────────────────────────
 app.UseCors("Frontend");
