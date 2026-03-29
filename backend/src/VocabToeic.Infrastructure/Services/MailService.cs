@@ -28,7 +28,7 @@ public class EmailService : IEmailService
       string toEmail, string displayName, string token,
       CancellationToken cancellationToken = default)
   {
-    var verifyUrl = $"{_frontendUrl}/verify-email?token={token}";
+    var verifyUrl = $"{_frontendUrl}/verify-email?token={Uri.EscapeDataString(token)}";
     var body = $"""
       <h2>Xin chào {displayName}!</h2>
       <p>Cảm ơn bạn đã đăng ký VocabToeic.</p>
