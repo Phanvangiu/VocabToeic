@@ -20,6 +20,13 @@ namespace VocabToeic.Infrastructure
                       typeof(AppDbContext).Assembly.FullName)
         )
       );
+
+      // ── Auto migrate ──────────────────────────────
+      using (var scope = services.BuildServiceProvider().CreateScope())
+      {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+      }
       // UnitOfWork — Scoped to match DbContext lifetime
       services.AddScoped<IUnitOfWork, UnitOfWork>();
 

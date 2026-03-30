@@ -112,9 +112,9 @@ builder.Services.AddAuthentication(options =>
 
      await context.Response.WriteAsync(
           System.Text.Json.JsonSerializer.Serialize(new
-           {
-             errors = new { message = new[] { "You do not have permission to access this resource." } }
-           })
+          {
+            errors = new { message = new[] { "You do not have permission to access this resource." } }
+          })
       );
    }
 
