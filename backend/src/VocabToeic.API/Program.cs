@@ -104,7 +104,19 @@ builder.Services.AddAuthentication(options =>
             errors = new { message = new[] { message } }
           })
       );
-    }
+    },
+    OnForbidden = async context =>
+   {
+     context.Response.StatusCode = 403;
+     context.Response.ContentType = "application/json";
+
+     await context.Response.WriteAsync(
+          System.Text.Json.JsonSerializer.Serialize(new
+           {
+             errors = new { message = new[] { "You do not have permission to access this resource." } }
+           })
+      );
+   }
 
   };
 });
