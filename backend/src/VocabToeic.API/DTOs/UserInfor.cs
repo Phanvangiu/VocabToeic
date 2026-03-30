@@ -6,6 +6,7 @@ namespace VocabToeic.API.DTOs
     public string Email { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
     public int? TargetScore { get; set; }
+    public int? WordsPerDay { get; set; }
     public int Streak { get; set; }
     public string? AvatarUrl { get; set; }
   }
