@@ -100,7 +100,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
         DisplayName = user.DisplayName,
         TargetScore = user.TargetScore,
         Streak = user.Streak,
-        AvatarUrl = user.AvatarUrl
+        AvatarUrl = user.AvatarUrl,
+        WordsPerDay = user.WordsPerDay
       }
     };
   }

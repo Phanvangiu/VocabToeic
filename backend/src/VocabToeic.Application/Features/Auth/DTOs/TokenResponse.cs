@@ -24,4 +24,6 @@ public class UserInfo
   public int? TargetScore { get; set; }
   public int Streak { get; set; }
   public string? AvatarUrl { get; set; }
+  public int? WordsPerDay { get; set; }
+
 }
