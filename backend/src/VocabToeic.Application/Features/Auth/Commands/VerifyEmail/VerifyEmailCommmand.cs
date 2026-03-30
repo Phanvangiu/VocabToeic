@@ -47,7 +47,7 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Tok
     user.EmailVerificationExpiresAt = null;
     _uow.Users.Update(user);
 
-    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email);
+    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email, user.Role.ToString());
     var (rawToken, hashedToken) = _jwtService.GenerateRefreshToken();
 
     var refreshToken = new RefreshToken

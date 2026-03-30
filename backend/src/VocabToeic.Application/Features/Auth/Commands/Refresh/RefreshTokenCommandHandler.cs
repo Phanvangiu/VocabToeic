@@ -71,7 +71,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
 
     // Generate new tokens
     var newAccessToken = _jwtService.GenerateAccessToken(
-        refreshToken.UserId, refreshToken.User.Email);
+        refreshToken.UserId, refreshToken.User.Email, refreshToken.User.Role.ToString());
 
     var (rawToken, hashedNewToken) = _jwtService.GenerateRefreshToken();
 
