@@ -17,6 +17,8 @@ public class WordDefinitionConfiguration : IEntityTypeConfiguration<WordDefiniti
 
     builder.Property(x => x.DefinitionVi)
         .IsRequired();
+    builder.Property(x => x.PartOfSpeech)
+        .HasMaxLength(20);
 
     builder.Property(x => x.ExampleEn);
     builder.Property(x => x.ExampleVi);

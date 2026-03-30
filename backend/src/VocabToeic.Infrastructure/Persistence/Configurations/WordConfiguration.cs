@@ -23,8 +23,6 @@ namespace VocabToeic.Infrastructure.Persistence.Configurations
         .HasMaxLength(100);
 
       builder.Property(x => x.AudioUrl);
-      builder.Property(x => x.PartOfSpeech)
-        .HasMaxLength(20);
 
       builder.Property(x => x.Topic)
         .IsRequired()
