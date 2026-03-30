@@ -86,7 +86,8 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Tok
         DisplayName = user.DisplayName,
         TargetScore = user.TargetScore,
         Streak = user.Streak,
-        AvatarUrl = user.AvatarUrl
+        AvatarUrl = user.AvatarUrl,
+        WordsPerDay = user.WordsPerDay
       }
     };
   }
@@ -101,6 +102,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Tok
       AvatarUrl = googleUser.AvatarUrl,
       // PasswordHash = null — user OAuth không có password
       Role = UserRole.User,
+      EmailVerified = true,
       IsActive = true
     };
 
