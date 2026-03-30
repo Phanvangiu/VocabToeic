@@ -70,7 +70,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
       throw new UnauthorizedException("Invalid email or password.");
 
     sw.Restart(); // ← thêm
-    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email);
+    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email, user.Role.ToString());
     var (rawToken, hashedToken) = _jwtService.GenerateRefreshToken();
     _logger.LogInformation("[PERF:Login] GenerateTokens: {Ms}ms", sw.ElapsedMilliseconds); // ← thêm
 

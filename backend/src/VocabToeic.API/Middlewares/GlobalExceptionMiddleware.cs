@@ -66,15 +66,15 @@ public class GlobalExceptionMiddleware
                 }
         };
         break;
-      case ForbiddenException ex:
-        statusCode = (int)HttpStatusCode.Forbidden;
-        response = new
-        {
-          errors = new Dictionary<string, string[]> {
-                    { "message", [ex.Message] }
-                }
-        };
-        break;
+      // case ForbiddenException ex:
+      //   statusCode = (int)HttpStatusCode.Forbidden;
+      //   response = new
+      //   {
+      //     errors = new Dictionary<string, string[]> {
+      //               { "message", [ex.Message] }
+      //           }
+      //   };
+      //   break;
       default:
         statusCode = (int)HttpStatusCode.InternalServerError;
         response = new

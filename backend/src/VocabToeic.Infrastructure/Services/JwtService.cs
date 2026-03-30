@@ -30,7 +30,8 @@ public class JwtService : IJwtService
         configuration["JwtSettings:AccessTokenExpiryMinutes"] ?? "5");
   }
 
-  public string GenerateAccessToken(Guid userId, string email)
+  public string GenerateAccessToken(Guid userId, string email, string role)
+
   {
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
     var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -39,6 +40,7 @@ public class JwtService : IJwtService
     {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, email),
+             new Claim(ClaimTypes.Role, role),
             // JTI = unique ID for each token, used for Redis blacklist
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Iat,

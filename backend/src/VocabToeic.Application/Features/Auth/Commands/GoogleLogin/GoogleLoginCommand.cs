@@ -61,7 +61,7 @@ public class GoogleLoginCommandHandler : IRequestHandler<GoogleLoginCommand, Tok
       _unitOfWork.Users.Update(user);
     }
     // 4. Tạo token pair
-    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email);
+    var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email, user.Role.ToString());
     var (rawRefreshToken, hashedRefreshToken) = _jwtService.GenerateRefreshToken();
 
     var refreshToken = new RefreshToken

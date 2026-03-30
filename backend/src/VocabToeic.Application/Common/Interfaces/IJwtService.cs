@@ -7,7 +7,7 @@ namespace VocabToeic.Application.Common.Interfaces;
 /// </summary>
 public interface IJwtService
 {
-  string GenerateAccessToken(Guid userId, string email);
+  string GenerateAccessToken(Guid userId, string email, string role);
   (string rawToken, string hashedToken) GenerateRefreshToken();
   ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
   string GetJtiFromToken(string token);
