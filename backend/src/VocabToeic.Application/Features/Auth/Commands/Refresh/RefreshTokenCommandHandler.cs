@@ -96,7 +96,8 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, T
         Email = refreshToken.User.Email,
         DisplayName = refreshToken.User.DisplayName,
         TargetScore = refreshToken.User.TargetScore,
-        Streak = refreshToken.User.Streak
+        Streak = refreshToken.User.Streak,
+        WordsPerDay = refreshToken.User.WordsPerDay
       }
     };
   }
